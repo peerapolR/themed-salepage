@@ -1,9 +1,25 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import Image from "next/image";
+import { Inter } from "next/font/google";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
-export default function Home() {
+export async function getStaticProps() {
+  const res = await fetch(
+    `https://developers-oaplus.line.biz/myshop/v1/products`,
+    {
+      method: "GET",
+      headers: {
+        "x-api-key": "MjFhNTU4ZjYtNzNkNS00YmQxLThlMTAtOWQ1ODU5NTNiYTJk",
+      },
+    }
+  );
+  const data = await res.json();
+  return {
+    props: { data: data.data },
+  };
+}
+
+export default function Home({ data }) {
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
@@ -20,7 +36,7 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            By{' '}
+            By{" "}
             <Image
               src="/vercel.svg"
               alt="Vercel Logo"
@@ -43,6 +59,22 @@ export default function Home() {
           priority
         />
       </div>
+      {data.map((item) => (
+        <div key={item.id}>
+          <p>{item.name}</p>
+          {item.imageUrls.map((image) => (
+            <img src={image}></img>
+          ))}
+          <p>category Name TH : {item.category.nameTh}</p>
+          <p>category Name EN : {item.category.nameEn}</p>
+
+          <p>{item.code}</p>
+
+          {item.description}
+          <p>{item.brand}</p>
+          <p>{item.instantDiscount}</p>
+        </div>
+      ))}
 
       <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
         <a
@@ -52,7 +84,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
+            Docs{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -69,7 +101,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
+            Learn{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -86,7 +118,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
+            Templates{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -103,7 +135,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
+            Deploy{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -114,5 +146,5 @@ export default function Home() {
         </a>
       </div>
     </main>
-  )
+  );
 }
